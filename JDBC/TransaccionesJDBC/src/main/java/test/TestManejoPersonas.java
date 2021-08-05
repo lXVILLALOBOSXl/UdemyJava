@@ -1,10 +1,13 @@
 package test;
 
+import datos.Conexion;
 import datos.PersonaDAO;
 import datos.UsuarioDAO;
 import domain.Persona;
 import domain.Usuario;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +37,7 @@ public class TestManejoPersonas {
         });*/
 
         //Pruebas usuarios
-        UsuarioDAO usuarioDAO = new UsuarioDAO();
+        //UsuarioDAO usuarioDAO = new UsuarioDAO();
 
         //Insertar
         /*Usuario usuario = new Usuario("lxvillaloboxl","hola123");
@@ -49,10 +52,34 @@ public class TestManejoPersonas {
         usuarioDAO.eliminar(usuario);*/
 
         //Imprimir
-        List<Usuario> usuarios = usuarioDAO.seleccionar();
+        /*List<Usuario> usuarios = usuarioDAO.seleccionar();
         usuarios.forEach(usuario1 -> {
             System.out.println("Usuario: " + usuario1);
-        });
+        });*/
+
+        //Pruebas manejo de transacciones
+        Connection conexion = null;
+        try {
+            conexion = Conexion.getConnection();
+            if(conexion.getAutoCommit()){
+                conexion.setAutoCommit(false);
+            }
+            PersonaDAO personaDAO = new PersonaDAO(conexion);
+            personaDAO.actualizar(new Persona(2,"Karla Ivonne","Lara","klara@mail.com","5566771122"));
+            //personaDAO.insertar(new Persona("Carlos","Ramirez111111111111111111111111111111111111111","cramirez@mail.com","12736459"));
+            personaDAO.insertar(new Persona("Carlos","Ramirez","cramirez@mail.com","12736459"));
+            conexion.commit();
+            System.out.println("Se ha hecho commit de la transaccion");
+        } catch (SQLException throwables) {
+            throwables.printStackTrace(System.out);
+            System.out.println("Entramos al rollback");
+            try {
+                conexion.rollback();
+            } catch (SQLException e) {
+                e.printStackTrace(System.out);
+            }
+        }
+
 
     }
 }

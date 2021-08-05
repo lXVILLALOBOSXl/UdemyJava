@@ -6,12 +6,21 @@ import java.sql.*;
 import java.util.*;
 
 public class PersonaDAO {
+    private Connection conexionTransaccional;
     private static final String SQL_SELECT = "SELECT * FROM persona";
     private static final String SQL_INSERT = "INSERT INTO persona (nombre, apellido, email, telefono) VALUES (?, ?, ?, ?)";
     private static final String SQL_UPDATE = "UPDATE persona SET nombre = ?, apellido = ?, email = ?, telefono = ? where idPersona = ?";
     private static final String SQL_DELETE = "DELETE FROM persona WHERE idPersona = ?";
 
-    public List<Persona> seleccionar(){
+    public PersonaDAO(){
+
+    }
+
+    public PersonaDAO(Connection conexionTransaccional){
+        this.conexionTransaccional = conexionTransaccional;
+    }
+
+    public List<Persona> seleccionar() throws SQLException {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
@@ -19,7 +28,7 @@ public class PersonaDAO {
         List<Persona> personas = new ArrayList<>();
 
         try {
-            connection = Conexion.getConnection();
+            connection = (this.conexionTransaccional != null) ? this.conexionTransaccional : Conexion.getConnection();
             preparedStatement = connection.prepareStatement(SQL_SELECT);
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()){
@@ -31,13 +40,13 @@ public class PersonaDAO {
                 persona = new Persona(idPersona,nombre,apellido,email,telefono);
                 personas.add(persona);
             }
-        } catch (SQLException ex) {
-            ex.printStackTrace(System.out);
         } finally {
             try {
                 Conexion.close(resultSet);
                 Conexion.close(preparedStatement);
-                Conexion.close(connection);
+                if(this.conexionTransaccional == null){
+                    Conexion.close(connection);
+                }
             } catch (SQLException ex) {
                 ex.printStackTrace(System.out);
             }
@@ -45,24 +54,24 @@ public class PersonaDAO {
         return personas;
     }
 
-    public int insertar(Persona persona){
+    public int insertar(Persona persona) throws SQLException {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         int registros = 0;
         try {
-            connection = Conexion.getConnection();
+            connection = (this.conexionTransaccional != null) ? this.conexionTransaccional : Conexion.getConnection();
             preparedStatement = connection.prepareStatement(SQL_INSERT);
             preparedStatement.setString(1,persona.getNombre());
             preparedStatement.setString(2,persona.getApellido());
             preparedStatement.setString(3,persona.getEmail());
             preparedStatement.setString(4,persona.getTelefono());
             registros = preparedStatement.executeUpdate();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }finally {
+        } finally {
             try {
                 Conexion.close(preparedStatement);
-                Conexion.close(connection);
+                if(this.conexionTransaccional == null){
+                    Conexion.close(connection);
+                }
             } catch (SQLException throwables) {
                 throwables.printStackTrace(System.out);
             }
@@ -70,12 +79,12 @@ public class PersonaDAO {
         return registros;
     }
 
-    public int actualizar(Persona persona){
+    public int actualizar(Persona persona) throws SQLException {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         int registros = 0;
         try {
-            connection = Conexion.getConnection();
+            connection = (this.conexionTransaccional != null) ? this.conexionTransaccional : Conexion.getConnection();
             preparedStatement = connection.prepareStatement(SQL_UPDATE);
             preparedStatement.setString(1,persona.getNombre());
             preparedStatement.setString(2,persona.getApellido());
@@ -83,12 +92,12 @@ public class PersonaDAO {
             preparedStatement.setString(4,persona.getTelefono());
             preparedStatement.setString(5,Integer.toString(persona.getIdPersona()));
             registros = preparedStatement.executeUpdate();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace(System.out);
-        }finally {
+        } finally {
             try {
                 Conexion.close(preparedStatement);
-                Conexion.close(connection);
+                if(this.conexionTransaccional == null){
+                    Conexion.close(connection);
+                }
             } catch (SQLException throwables) {
                 throwables.printStackTrace(System.out);
             }
@@ -96,21 +105,21 @@ public class PersonaDAO {
         return registros;
     }
 
-    public int eliminar(Persona persona){
+    public int eliminar(Persona persona) throws SQLException {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         int registros = 0;
         try {
-            connection = Conexion.getConnection();
+            connection = (this.conexionTransaccional != null) ? this.conexionTransaccional : Conexion.getConnection();
             preparedStatement = connection.prepareStatement(SQL_DELETE);
             preparedStatement.setString(1,Integer.toString(persona.getIdPersona()));
             registros = preparedStatement.executeUpdate();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace(System.out);
-        }finally {
+        } finally {
             try {
                 Conexion.close(preparedStatement);
-                Conexion.close(connection);
+                if(this.conexionTransaccional == null){
+                    Conexion.close(connection);
+                }
             } catch (SQLException throwables) {
                 throwables.printStackTrace(System.out);
             }

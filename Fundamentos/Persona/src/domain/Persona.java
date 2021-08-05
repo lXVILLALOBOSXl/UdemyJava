@@ -1,0 +1,72 @@
+package domain;
+
+public class Persona {
+    protected String nombre;
+    protected char genero;
+    protected int edad;
+    protected String direccion;
+    protected int idPersona;
+    protected static int idContador;
+
+    public Persona(String nombre, char genero, int edad, String direccion) {
+        this.nombre = nombre;
+        this.genero = genero;
+        this.edad = edad;
+        this.direccion = direccion;
+        this.idPersona = ++Persona.idContador;
+    }
+
+    public Persona() {
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public char getGenero() {
+        return genero;
+    }
+
+    public void setGenero(char genero) {
+        this.genero = genero;
+    }
+
+    public int getEdad() {
+        return edad;
+    }
+
+    public void setEdad(int edad) {
+        this.edad = edad;
+    }
+
+    public String getDireccion() {
+        return direccion;
+    }
+
+    public void setDireccion(String direccion) {
+        this.direccion = direccion;
+    }
+
+    public int getIdPersona() {
+        return idPersona;
+    }
+
+    public static int getIdContador() {
+        return idContador;
+    }
+
+    @Override
+    public String toString() {
+        return "Persona{" +
+                "nombre='" + nombre + '\'' +
+                ", genero=" + genero +
+                ", edad=" + edad +
+                ", direccion='" + direccion + '\'' +
+                ", idPersona=" + idPersona +
+                '}';
+    }
+}
