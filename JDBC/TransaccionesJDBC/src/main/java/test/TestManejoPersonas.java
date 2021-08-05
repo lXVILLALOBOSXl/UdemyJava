@@ -57,8 +57,8 @@ public class TestManejoPersonas {
             System.out.println("Usuario: " + usuario1);
         });*/
 
-        //Pruebas manejo de transacciones
-        Connection conexion = null;
+        //Pruebas manejo de transacciones persona
+        /*Connection conexion = null;
         try {
             conexion = Conexion.getConnection();
             if(conexion.getAutoCommit()){
@@ -75,6 +75,29 @@ public class TestManejoPersonas {
             System.out.println("Entramos al rollback");
             try {
                 conexion.rollback();
+            } catch (SQLException e) {
+                e.printStackTrace(System.out);
+            }
+        }*/
+
+        //Pruebas manejo de transacciones usuario
+        Connection connection = null;
+        try {
+            connection = Conexion.getConnection();
+            if (connection.getAutoCommit()){
+                connection.setAutoCommit(false);
+            }
+            UsuarioDAO usuarioDAO = new UsuarioDAO(connection);
+            usuarioDAO.actualizar(new Usuario(2,"lxvillalobosxl","hola321"));
+            //usuarioDAO.insertar(new Usuario("jermyscott","439472398473298749328749327948723947239472398749328749237492374972398472398"));
+            usuarioDAO.insertar(new Usuario("jermyscott","4394"));
+            connection.commit();
+            System.out.println("Se ha hecho commit de la transaccion");
+        } catch (SQLException throwables) {
+            throwables.printStackTrace(System.out);
+            System.out.println("Entramos al rollback");
+            try {
+                connection.rollback();
             } catch (SQLException e) {
                 e.printStackTrace(System.out);
             }
